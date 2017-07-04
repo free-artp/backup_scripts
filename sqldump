@@ -36,5 +36,5 @@ do
 done
 
 echo mysql backup $datestr finished >>$mlog
-mail $repmail <$mlog
+mail -s $myname $repmail <$mlog
 rm $mlog
