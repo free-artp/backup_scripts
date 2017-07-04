@@ -6,11 +6,11 @@ myname=`basename $0`
 mlog=$log-$myname.log
 echo `date` $myname - backup file rotation $datestr started >$mlog
 
-wc=`date +%W`
-yc=`date +%y`
-mc=`date +%m`
-dc=`date +%d`
-uc=`date +%u`
+wc=`date +%W|sed 's/^0*//'`
+yc=`date +%y|sed 's/^0*//'`
+mc=`date +%m|sed 's/^0*//'`
+dc=`date +%d|sed 's/^0*//'`
+uc=`date +%u|sed 's/^0*//'`
 nowds=`date --date="$yc$mc$dc" +"%s"`
 let delta1="7 * 24 * 3600 + $uc * 24 * 3600"
 let delta2="4 * 7 * 24 * 3600 + $dc * 24 * 3600"
