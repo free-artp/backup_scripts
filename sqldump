@@ -1,0 +1,40 @@
+#!/bin/bash
+
+. $HOME/backup.cfg
+
+dump='/usr/bin/mysqldump'
+pack='/bin/gzip'
+bf=$datestr.sql.gz
+myname=`basename $0`
+mlog=$log-$myname.log
+
+echo `date` $myname - mysql backup $datestr started >$mlog
+
+if [ ! -d $bdir ];
+then
+  mkdir $bdir;
+  echo Create $bdir >>$mlog
+fi
+
+for base in "${sqlbases[@]}";
+do
+  if [ ! -d $bdir/$base ];
+  then
+    mkdir $bdir/$base
+    echo Create $wdir/$base >>$mlog
+  fi
+
+  fbf=$bdir/$base/$base-$bf
+  $dump -u $sqluser --password=$sqlpwd $base 2>>/dev/null | $pack >$fbf 2>>/dev/null
+  if [ "$?" -eq 0 ]
+  then
+    echo $base backuped >>$mlog
+  else
+    echo $base not backuped. Look in database.err for information >>$mlog
+  fi
+
+done
+
+echo mysql backup $datestr finished >>$mlog
+mail $repmail <$mlog
+rm $mlog

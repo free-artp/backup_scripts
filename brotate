@@ -1,0 +1,69 @@
+#!/bin/bash
+
+. $HOME/backup.cfg
+
+myname=`basename $0`
+mlog=$log-$myname.log
+echo `date` $myname - backup file rotation $datestr started >$mlog
+
+wc=`date +%W`
+yc=`date +%y`
+mc=`date +%m`
+dc=`date +%d`
+uc=`date +%u`
+nowds=`date --date="$yc$mc$dc" +"%s"`
+let delta1="7 * 24 * 3600 + $uc * 24 * 3600"
+let delta2="4 * 7 * 24 * 3600 + $dc * 24 * 3600"
+
+function scan {
+	cd $1
+	for f in *; do
+		if [ -d $f ];
+		then
+			scan $f
+			continue
+		fi
+		if [[ $f =~ (.*)-(.*)-(.*) ]]
+		then
+			d=${BASH_REMATCH[2]}
+			t=${BASH_REMATCH[3]}
+			if [[ $d =~ (..)(..)(..) ]]
+			then
+				yy=${BASH_REMATCH[1]}
+				mm=${BASH_REMATCH[2]}
+				dd=${BASH_REMATCH[3]}
+
+				dt=`date --date="$d" +%Y%m%d`
+				mn=`date --date="$d" +%m`	# месяц
+				wn=`date --date="$d" +%W`	# неделя
+				dn=`date --date="$d" +%u`	# день недели
+
+				dds=`date --date="$yy$mm$dd" +"%s"`
+				deltac=$(($nowds-$dds))
+				
+				# текущая и пред неделя - каждый день
+				if [ $deltac -lt $delta1 ] ; then
+					continue
+				fi
+				# текущий и предыдущий месяц - каждое воскресные
+				if [[ ($deltac -lt $delta2) && "$dn" = "7" ]] ; then
+					continue
+				fi
+				# 1-е число любого месяца
+				if [ "$dd" = "01" ]; then
+					continue
+				fi
+			fi
+		fi
+		rm -f $f
+		echo File $f removed >>$mlog
+	done
+	cd ..
+}
+
+scan /home/dok/backups
+
+
+echo `date` $myname - backup file rotation $datestr finished >>$mlog
+mail -s $myname $repmail <$mlog
+rm $mlog
