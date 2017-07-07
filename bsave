@@ -29,7 +29,8 @@ do
 	tar -czf $bdir/$nbase/$fbase -C$basedir "$i" 1>>/dev/null 2>>/dev/null
 	if [ "$?" -eq 0 ]
 	then
-		echo $i backuped in to $bdir/$nbase/$fbase >>$mlog
+		echo -n $i backuped in to $bdir/$nbase/$fbase with size: >>$mlog
+		echo `du -h $bdir/$nbase/$fbase | cut -f1` >>$mlog
 	else
 		echo $i not backuped. >>$mlog
 	fi
