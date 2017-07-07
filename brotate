@@ -67,5 +67,5 @@ scan /home/dok/backups
 
 
 echo `date` $myname - backup file rotation $datestr finished >>$mlog
-mail -s $myname $repmail <$mlog
-rm $mlog
+send_report $myname' at '$whost $mlog;
+rm -f $mlog

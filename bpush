@@ -10,6 +10,7 @@ echo `date` $myname - S3 file pushing $datestr started >$mlog
 s3cmd --no-progress --skip-existing --delete-removed sync /home/dok/backups/ s3://DOK-backups 1>>$mlog 2>>$mlog
 
 echo `date` $myname - S3 file pushing $datestr started >>$mlog
-mail -s $myname $repmail <$mlog
-rm $mlog
+
+send_report $myname' at '$whost $mlog;
+rm -f $mlog
 

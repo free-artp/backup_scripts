@@ -38,6 +38,6 @@ done
 
 echo `date` $myname - File backup $datestr finished >>$mlog
 
-mail -s $myname $repmail <$mlog
-rm $mlog
+send_report $myname' at '$whost $mlog;
+rm -f $mlog
 

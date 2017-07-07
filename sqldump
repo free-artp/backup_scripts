@@ -28,13 +28,15 @@ do
   $dump -u $sqluser --password=$sqlpwd $base 2>>/dev/null | $pack >$fbf 2>>/dev/null
   if [ "$?" -eq 0 ]
   then
-    echo $base backuped >>$mlog
+    echo -n $base backuped to $fbf with size: >>$mlog
+    echo `du -h $fbf | cut -f1` >>$mlog
   else
     echo $base not backuped. Look in database.err for information >>$mlog
   fi
 
 done
 
-echo mysql backup $datestr finished >>$mlog
-mail -s $myname $repmail <$mlog
-rm $mlog
+echo `date`-  mysql backup $datestr finished >>$mlog
+
+send_report $myname' at '$whost $mlog;
+rm -f $mlog
