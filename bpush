@@ -6,8 +6,9 @@ myname=`basename $0`
 mlog=$log-$myname.log
 
 echo `date` $myname - S3 file pushing $datestr started >$mlog
+echo Dir: $bdir Bucket: $s3bucket >>$mlog
 
-s3cmd --no-progress --skip-existing --delete-removed sync /home/dok/backups/ s3://DOK-backups 1>>$mlog 2>>$mlog
+s3cmd --no-progress --skip-existing --delete-removed sync $bdir s3://$s3bucket 1>>$mlog 2>>$mlog
 
 echo `date` $myname - S3 file pushing $datestr started >>$mlog
 

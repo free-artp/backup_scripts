@@ -63,7 +63,7 @@ function scan {
 	cd ..
 }
 
-scan /home/dok/backups
+scan $bdir
 
 echo Backup storage size:>>$mlog
 du -csh $bdir/* >>$mlog

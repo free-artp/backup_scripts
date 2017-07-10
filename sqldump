@@ -21,7 +21,7 @@ do
   if [ ! -d $bdir/$base ];
   then
     mkdir $bdir/$base
-    echo Create $wdir/$base >>$mlog
+    echo Create $bdir/$base >>$mlog
   fi
 
   fbf=$bdir/$base/$base-$bf
