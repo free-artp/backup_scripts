@@ -7,6 +7,12 @@ mlog=$log-$myname.log
 
 echo `date` $myname - File backup $datestr started >$mlog
 
+if [ ! -d $bdir ];
+then
+  mkdir $bdir;
+  echo Create $bdir >>$mlog
+fi
+
 for i in "${bases[@]}" 
 do
 	nbase=$i
@@ -24,7 +30,7 @@ do
 
 	if [ ! -d $bdir/$nbase ]; then
 		mkdir $bdir/$nbase
-		echo Create $bdir/$nbase
+		echo Create $bdir/$nbase >>$mlog
 	fi
 	tar -czf $bdir/$nbase/$fbase -C$basedir "$i" 1>>/dev/null 2>>/dev/null
 	if [ "$?" -eq 0 ]
