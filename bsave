@@ -2,10 +2,7 @@
 
 . $HOME/backup.cfg
 
-myname=`basename $0`
-mlog=$log-$myname.log
-
-echo `date` $myname - File backup $datestr started >$mlog
+echo ======= $myname = `date` - File backup $datestr started >$mlog
 
 if [ ! -d $bdir ];
 then
@@ -45,6 +42,4 @@ done
 
 echo `date` $myname - File backup $datestr finished >>$mlog
 
-send_report $myname' at '$whost $mlog;
-rm -f $mlog
-
+do_final;

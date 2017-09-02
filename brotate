@@ -2,9 +2,7 @@
 
 . $HOME/backup.cfg
 
-myname=`basename $0`
-mlog=$log-$myname.log
-echo `date` $myname - backup file rotation $datestr started >$mlog
+echo ======= $myname = `date` - backup file rotation $datestr started >$mlog
 
 wc=`date +%W`
 yc=`date +%y`
@@ -69,5 +67,5 @@ echo Backup storage size:>>$mlog
 du -csh $bdir/* >>$mlog
 
 echo `date` $myname - backup file rotation $datestr finished >>$mlog
-send_report $myname' at '$whost $mlog;
-rm -f $mlog
+
+do_final;

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+. $HOME/backup.cfg
+
+if [ -f $commonlog ]; then
+
+	if [ x"$send_common_log" = "xy" ]; then
+		send_report 'LOG for '$myname' at '$whost $commonlog;
+	fi
+
+	rm -f $commonlog
+fi

@@ -2,15 +2,11 @@
 
 . $HOME/backup.cfg
 
-myname=`basename $0`
-mlog=$log-$myname.log
 
-echo `date` $myname - S3 file pushing $datestr started >$mlog
+echo ======= $myname = `date` - S3 file pushing $datestr started >$mlog
 
 s3cmd --no-progress --skip-existing --delete-removed sync /home/dok/backups/ s3://DOK-backups 1>>$mlog 2>>$mlog
 
 echo `date` $myname - S3 file pushing $datestr started >>$mlog
 
-send_report $myname' at '$whost $mlog;
-rm -f $mlog
-
+do_final;

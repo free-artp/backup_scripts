@@ -2,10 +2,7 @@
 
 . $HOME/backup.cfg
 
-myname=`basename $0`
-mlog=$log-$myname.log
-
-echo `date` $myname - Trac environments backup $datestr started >$mlog
+echo ======= $myname = `date` - Trac environments backup $datestr started >$mlog
 
 if [ ! -d $bdir ];
 then
@@ -49,8 +46,7 @@ do
 done
 
 echo -- >>$mlog
-echo `date` $myname - File backup $datestr finished >>$mlog
+echo `date` $myname - Trac environments backup $datestr finished >>$mlog
 
-send_report $myname' at '$whost $mlog;
-rm -f $mlog
+do_final;
 

@@ -5,10 +5,8 @@
 dump='/usr/bin/mysqldump'
 pack='/bin/gzip'
 bf=$datestr.sql.gz
-myname=`basename $0`
-mlog=$log-$myname.log
 
-echo `date` $myname - mysql backup $datestr started >$mlog
+echo ======= $myname = `date` - mysql backup $datestr started >$mlog
 
 if [ ! -d $bdir ];
 then
@@ -21,7 +19,7 @@ do
   if [ ! -d $bdir/$base ];
   then
     mkdir $bdir/$base
-    echo Create $wdir/$base >>$mlog
+    echo Create $bdir/$base >>$mlog
   fi
 
   fbf=$bdir/$base/$base-$bf
@@ -38,5 +36,4 @@ done
 
 echo `date`-  mysql backup $datestr finished >>$mlog
 
-send_report $myname' at '$whost $mlog;
-rm -f $mlog
+do_final;
