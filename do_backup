@@ -1,0 +1,22 @@
+#!/bin/bash
+
+. $HOME/backup.cfg
+
+# make backup jof mysql db
+sqldump
+
+# backup jf the 1C database's directories
+bsave
+
+# backup some TRAC env.
+bsave_trac
+
+# delete old detailed backups
+brotate
+
+# save backups on S3
+#bpush
+
+# send log of work
+sendlog
+
