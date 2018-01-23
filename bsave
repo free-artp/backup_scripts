@@ -13,6 +13,7 @@ fi
 for i in "${bases[@]}" 
 do
 	tar_opt=''
+	tar_dir="$basedir/$i"
 	nbase=$i
 	nbase=`echo $nbase|sed 's/ /_/g'`
 	nbase=`echo $nbase|sed 'y/абвгджзийклмнопрстуфхыэе/abvgdjzijklmnoprstufhyee/'|sed 's/[ьъ]//g; s/ё/yo/g; s/ц/ts/g; s/ч/ch/g; s/ш/sh/g; s/щ/sh/g; s/ю/yu/g; s/я/ya/'`;
@@ -30,7 +31,7 @@ do
 		mkdir $bdir/$nbase
 		echo Create $bdir/$nbase >>$mlog
 	fi
-	if [ -L $basedir/$i ]; then
+	if [ -L "$tar_dir" ]; then
 		tar_opt='-h'
 	fi
 	tar $tar_opt  -czf $bdir/$nbase/$fbase -C$basedir "$i" 1>>/dev/null 2>>/dev/null
