@@ -3,20 +3,22 @@
 . $HOME/backup.cfg
 
 # make backup jof mysql db
-sqldump
+$bindir/sqldump
 
 # backup jf the 1C database's directories
-bsave
+$bindir/bsave
 
 # backup some TRAC env.
-bsave_trac
+$bindir/bsave_trac
 
 # delete old detailed backups
-brotate
+$bindir/brotate
 
 # save backups on S3
-#bpush
+$bindir/bpush
 
 # send log of work
-sendlog
+$bindir/sendlog
 
+#
+rm -f $mlog
