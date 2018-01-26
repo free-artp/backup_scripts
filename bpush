@@ -1,12 +1,13 @@
 #!/bin/bash
 
 . $HOME/backup.cfg
+. `dirname $0`/common
 
 
-echo ======= $myname = `date` - S3 file pushing $datestr started >$mlog
+echo ======= $myname = `date` - S3 file pushing $datestr started
 
-s3cmd --no-progress --skip-existing --delete-removed sync /home/dok/backups/ s3://DOK-backups 1>>$mlog 2>>$mlog
+s3cmd --no-progress --skip-existing --delete-removed sync /home/dok/backups/ s3://DOK-backups
 
-echo `date` $myname - S3 file pushing $datestr finished >>$mlog
+echo `date` $myname - S3 file pushing $datestr finished
 
 do_final;

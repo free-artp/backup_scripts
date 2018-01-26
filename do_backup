@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . $HOME/backup.cfg
+. `dirname $0`/common
 
 # make backup jof mysql db
 $bindir/sqldump

@@ -1,52 +1,53 @@
 #!/bin/bash
 
 . $HOME/backup.cfg
+. `dirname $0`/common
 
-echo ======= $myname = `date` - Trac environments backup $datestr started >$mlog
+echo ======= $myname = `date` - Trac environments backup $datestr started
 
 if [ ! -d $bdir ];
 then
   mkdir $bdir;
-  echo Create $bdir >>$mlog
+  echo Create $bdir 
 fi
 
 # bdir - полный путь каталога для бэкапов
 
 for i in "${tracenv[@]}" 
 do
-	echo -- $i >>$mlog
+	echo -- $i 
 	# проверим и удалим каталог ...backups/trac-<env>-<datestr>. Его создаcт trac-adm во время бэкапа
 	tmpname=trac-$i-$datestr
 	if [ -d $bdir/$tmpname ]; then
 		rm -r $bdir/$tmpname
-		echo Delete $bdir/$tmpname >>$mlog
+		echo Delete $bdir/$tmpname 
 	fi
 	# проверим или создадим каталог ...backups/<env>. Он создается один раз. Туда будем класть затаренные <env>-$datestr.tgz
 	if [ ! -d $bdir/$i ]; then
 		mkdir $bdir/$i
-		echo Create $bdir/$i >>$mlog
+		echo Create $bdir/$i 
 	fi
 	
-	$tracadm $tracdir/projects/$i hotcopy $bdir/$tmpname 1>>$mlog 2>>$mlog
+	$tracadm $tracdir/projects/$i hotcopy $bdir/$tmpname
 	
 	if [ "$?" -eq 0 ]
 	then
-		tar -czf $bdir/$i/$i-$datestr.tgz -C$bdir "$tmpname" 1>>/dev/null 2>>/dev/null
-		echo -n $i backuped in to $bdir/$i/$i-$datestr.tgz with size: >>$mlog
-		echo `du -hs $bdir/$i/$i-$datestr.tgz | cut -f1` >>$mlog
+		tar -czf $bdir/$i/$i-$datestr.tgz -C$bdir "$tmpname"
+		echo -n $i backuped in to $bdir/$i/$i-$datestr.tgz with size: 
+		echo `du -hs $bdir/$i/$i-$datestr.tgz | cut -f1` 
 	else
-		echo $i not backuped. >>$mlog
+		echo $i not backuped. 
 	fi
 
 	if [ -d $bdir/$tmpname ]; then
 		rm -r $bdir/$tmpname
-		echo Delete $bdir/$tmpname >>$mlog
+		echo Delete $bdir/$tmpname 
 	fi
 
 done
 
-echo -- >>$mlog
-echo `date` $myname - Trac environments backup $datestr finished >>$mlog
+echo -- 
+echo `date` $myname - Trac environments backup $datestr finished 
 
 do_final;
 

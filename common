@@ -1,0 +1,101 @@
+#
+# common parametrs and functions for backup scripts
+#
+
+# temporary file names etc.
+
+myname=`basename $0`
+bindir=`dirname $0`
+
+datestr=`date +%y%m%d-%H:%M`
+datestrshort=`date +%y%m%d`
+
+# to send e-mail reports
+
+if [ x$USER = "x" ]; then
+  if [ x$LOGNAME = "x" ]; then
+    wuser=`whoami`;
+  else
+    wuser=$LOGNAME;
+  fi
+else
+  wuser=$USER;
+fi
+#
+whost=`hostname --long`
+mailcmd='/usr/bin/mail'
+
+# logfile
+
+log=/tmp/$wuser-$datestr
+mlog=${log}-${myname}.log
+commonlog=/tmp/$wuser-$datestrshort.log
+
+# if not debug mode, redirect output to logfile
+
+if [ "x"$debug != "xy" ]; then
+	exec &>$mlog
+fi
+
+#
+# directory for backups storage
+# a="/home/artp/"; b="${a%*/}"; echo $b; c="${b##*/}"; echo $c
+bdir="${bindir%*/}"/../backups
+
+#
+# Trac environments backup
+#
+tracadm=/usr/local/bin/trac-admin
+
+#==================================================
+# Common functions
+#
+
+# save string to file
+# do_log /path/to/file.log bla bla ... bla
+#
+function do_log() {
+	file=$1
+	shift;
+	echo $* >>$file
+}
+
+# send_report "subject" "file";
+function send_report {
+  tmpf=/tmp/$$.tmp
+  echo "From: $wuser@$whost" >$tmpf;
+  echo "To: $repmail" >>$tmpf;
+  echo "Reply-To: $wuser@$whost" >>$tmpf;
+  echo "Subject: $1" >>$tmpf;
+  echo "Content-Transfer-Encoding: 8bit" >>$tmpf;
+  echo "Content-Type: text/html; charset=UTF-8" >>$tmpf;
+  echo >>$tmpf;
+  echo >>$tmpf;
+  echo '<html>'>>$tmpf;
+  echo '<pre>'>>$tmpf;
+
+  cat $2 >>$tmpf;
+
+  echo '</pre>'>>$tmpf;
+  echo '</html>'>>$tmpf;
+
+  cat $tmpf| /usr/sbin/sendmail -t;
+  rm -f $tmpf
+}
+
+function do_final {
+
+  if [ x"$debug" != "xy" ]; then
+	if [ x"$send_partial_log" = "xy" ]; then
+		send_report $myname' at '$whost $mlog;
+	fi
+
+	if  [ x"$send_common_log" = "xy" ]; then
+		cat $mlog >> $commonlog
+	fi
+
+	rm -f $mlog
+  fi
+}
+
+echo >>$mlog

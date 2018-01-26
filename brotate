@@ -1,8 +1,9 @@
 #!/bin/bash
 
 . $HOME/backup.cfg
+. `dirname $0`/common
 
-echo ======= $myname = `date` - backup file rotation $datestr started >$mlog
+echo ======= $myname = `date` - backup file rotation $datestr started
 
 wc=`date +%W`
 yc=`date +%y`
@@ -56,16 +57,16 @@ function scan {
 			fi
 		fi
 		rm -f $f
-		echo File $f removed >>$mlog
+		echo File $f removed 
 	done
 	cd ..
 }
 
 scan /home/dok/backups
 
-echo Backup storage size:>>$mlog
-du -csh $bdir/* >>$mlog
+echo Backup storage size:
+du -csh $bdir/* 
 
-echo `date` $myname - backup file rotation $datestr finished >>$mlog
+echo `date` $myname - backup file rotation $datestr finished 
 
 do_final;

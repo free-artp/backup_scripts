@@ -1,17 +1,18 @@
 #!/bin/bash
 
 . $HOME/backup.cfg
+. `dirname $0`/common
 
 dump='/usr/bin/mysqldump'
 pack='/bin/gzip'
 bf=$datestr.sql.gz
 
-echo ======= $myname = `date` - mysql backup $datestr started >$mlog
+echo ======= $myname = `date` - mysql backup $datestr started
 
 if [ ! -d $bdir ];
 then
   mkdir $bdir;
-  echo Create $bdir >>$mlog
+  echo Create $bdir 
 fi
 
 for base in "${sqlbases[@]}";
@@ -19,21 +20,21 @@ do
   if [ ! -d $bdir/$base ];
   then
     mkdir $bdir/$base
-    echo Create $bdir/$base >>$mlog
+    echo Create $bdir/$base 
   fi
 
   fbf=$bdir/$base/$base-$bf
-  $dump -u $sqluser --password=$sqlpwd $base 2>>/dev/null | $pack >$fbf 2>>/dev/null
+  $dump -u $sqluser --password=$sqlpwd $base | $pack >$fbf
   if [ "$?" -eq 0 ]
   then
-    echo -n $base backuped to $fbf with size: >>$mlog
-    echo `du -h $fbf | cut -f1` >>$mlog
+    echo -n $base backuped to $fbf with size: 
+    echo `du -h $fbf | cut -f1` 
   else
-    echo $base not backuped. Look in database.err for information >>$mlog
+    echo $base not backuped. Look in database.err for information 
   fi
 
 done
 
-echo `date`-  mysql backup $datestr finished >>$mlog
+echo `date`-  mysql backup $datestr finished 
 
 do_final;
