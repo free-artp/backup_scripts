@@ -1,6 +1,7 @@
 #!/bin/bash
 
 . $HOME/backup.cfg
+. `dirname $0`/common
 
 if [ -f $commonlog ]; then
 
