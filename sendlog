@@ -1,0 +1,14 @@
+#!/bin/bash
+
+. $HOME/backup.cfg
+. `dirname $0`/common
+
+if [ -f $commonlog ]; then
+
+	if [ x"$send_common_log" = "xy" ]; then
+		send_report 'Nightly log for '$wuser' at '$whost $commonlog;
+	fi
+
+	rm -f $commonlog
+	rm -f $mlog
+fi

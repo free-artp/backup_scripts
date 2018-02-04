@@ -1,14 +1,20 @@
 #!/bin/bash
 
 . $HOME/backup.cfg
+. `dirname $0`/common
 
-myname=`basename $0`
-mlog=$log-$myname.log
+echo ======= $myname = `date` - File backup $datestr started 
 
-echo `date` $myname - File backup $datestr started >$mlog
+if [ ! -d $bdir ];
+then
+  mkdir $bdir;
+  echo Create $bdir 
+fi
 
 for i in "${bases[@]}" 
 do
+	tar_opt=''
+	tar_dir="$basedir/$i"
 	nbase=$i
 	nbase=`echo $nbase|sed 's/ /_/g'`
 	nbase=`echo $nbase|sed 'y/абвгджзийклмнопрстуфхыэе/abvgdjzijklmnoprstufhyee/'|sed 's/[ьъ]//g; s/ё/yo/g; s/ц/ts/g; s/ч/ch/g; s/ш/sh/g; s/щ/sh/g; s/ю/yu/g; s/я/ya/'`;
@@ -18,27 +24,37 @@ do
 # basedir -  полный путь к исходному каталогу всех баз
 # i - название подкаталога базы
 #
-# bdir - полный путь каталога для бэкапов
-# nbase - транслитерированное название базы. Название каталога для архивов, без пути
+# bdir - полный путь каталога для всех бэкапов
+# nbase - транслитерированное название базы. Используется как название подкаталога для архива.
 # fbase - файл архива базы, без пути.
 
 	if [ ! -d $bdir/$nbase ]; then
 		mkdir $bdir/$nbase
-		echo Create $bdir/$nbase
+		echo Create $bdir/$nbase 
 	fi
-	tar -czf $bdir/$nbase/$fbase -C$basedir "$i" 1>>/dev/null 2>>/dev/null
+	if [ -L "$tar_dir" ]; then
+		tar_opt+=' -h'
+	fi
+
+#	tar $tar_opt  -czf $bdir/$nbase/$fbase -C$basedir "$i" 1>>/dev/null 2>>/dev/null
+#	tar $tar_opt  -cvzf $bdir/$nbase/$fbase -C$basedir "$i"
+	cmd="tar $tar_opt  -czf $bdir/$nbase/$fbase -C$basedir"
+	if [ 'x'$debug = 'xy' ]; then
+		echo $cmd "$i"
+	fi
+
+	$cmd "$i"
+
 	if [ "$?" -eq 0 ]
 	then
-		echo -n $i backuped in to $bdir/$nbase/$fbase with size: >>$mlog
-		echo `du -h $bdir/$nbase/$fbase | cut -f1` >>$mlog
+		echo -n $i backuped in to $bdir/$nbase/$fbase with size: 
+		echo `du -h $bdir/$nbase/$fbase | cut -f1` 
 	else
-		echo $i not backuped. >>$mlog
+		echo $i not backuped. 
 	fi
 
 done
 
-echo `date` $myname - File backup $datestr finished >>$mlog
+echo `date` $myname - File backup $datestr finished 
 
-send_report $myname' at '$whost $mlog;
-rm -f $mlog
-
+do_final;

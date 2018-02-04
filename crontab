@@ -20,8 +20,12 @@
 # For more information see the manual pages of crontab(5) and cron(8)
 # 
 # m h  dom mon dow   command
-59 23 * * * /home/dok/bin/sqldump
-30 02 * * * /home/dok/bin/bsave
-15 03 * * * /home/dok/bin/brotate
-15 04 * * * /home/dok/bin/bpush
+#01 00 * * * /home/dok/bin/sqldump
+#00 01 * * * /home/dok/bin/bsave
+#30 01 * * * /home/dok/bin/bsave_trac
+#00 02 * * * /home/dok/bin/brotate
+#30 02 * * * /home/dok/bin/bpush
+#30 06 * * * /home/dok/bin/sendlog
+#
+01 01 * * * /home/dok/bin/do_backup
 
