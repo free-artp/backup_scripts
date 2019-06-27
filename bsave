@@ -13,13 +13,23 @@ fi
 
 for i in "${bases[@]}" 
 do
-	tar_opt=''
 	tar_dir="$basedir/$i"
+	tar_opt=''
+	# если каталоги - симлинки
+	if [ -L "$tar_dir" ]; then
+		tar_opt+=' -h'
+	fi
+
 	nbase=$i
 	nbase=`echo $nbase|sed 's/ /_/g'`
 	nbase=`echo $nbase|sed 'y/абвгджзийклмнопрстуфхыэе/abvgdjzijklmnoprstufhyee/'|sed 's/[ьъ]//g; s/ё/yo/g; s/ц/ts/g; s/ч/ch/g; s/ш/sh/g; s/щ/sh/g; s/ю/yu/g; s/я/ya/'`;
 	nbase=`echo $nbase|sed 'y/АБВГДЖЗИЙКЛМНОПРСТУФХЫЭЕ/ABVGDJZIJKLMNOPRSTUFHYEE/'|sed 's/[ЬЪ]//g; s/Ё/YO/g; s/Ц/TS/g; s/Ч/CH/g; s/Ш/SH/g; s/Щ/SH/g; s/Ю/YU/g; s/Я/YA/'`;
-	fbase=$nbase-$datestr.tgz
+
+	if [ 'z'$cpulimit = 'z' ]; then
+		fbase=$nbase-$datestr.tgz
+	else
+		fbase=$nbase-$datestr.tar
+	fi
 
 # basedir -  полный путь к исходному каталогу всех баз
 # i - название подкаталога базы
@@ -32,23 +42,49 @@ do
 		mkdir $bdir/$nbase
 		echo Create $bdir/$nbase 
 	fi
-	if [ -L "$tar_dir" ]; then
-		tar_opt+=' -h'
+
+	if [ 'z'$cpulimit = 'z' ]; then
+		tar_opt+=' -czf '
+	else
+		tar_opt+=' -cf '
 	fi
 
 #	tar $tar_opt  -czf $bdir/$nbase/$fbase -C$basedir "$i" 1>>/dev/null 2>>/dev/null
 #	tar $tar_opt  -cvzf $bdir/$nbase/$fbase -C$basedir "$i"
-	cmd="tar $tar_opt  -czf $bdir/$nbase/$fbase -C$basedir"
+#
+#http://ashep.org/2010/cpulimit-chut-pomedlennee-koni/#.W0ShtfZuKuk
+#
+	cmd="tar $tar_opt $bdir/$nbase/$fbase -C$basedir $i"
+#	if [ ! 'z'$cpulimit = 'z' ]; then
+#		cmd=$cmd' & cpulimit --lazy --limit '$cpulimit' --pid $!'
+#	fi
+
 	if [ 'x'$debug = 'xy' ]; then
-		echo $cmd "$i"
+		echo $cmd
 	fi
 
-	$cmd "$i"
+	$cmd
 
 	if [ "$?" -eq 0 ]
 	then
 		echo -n $i backuped in to $bdir/$nbase/$fbase with size: 
 		echo `du -h $bdir/$nbase/$fbase | cut -f1` 
+
+		if [ ! 'z'$cpulimit = 'z' ]; then
+			cmd='gzip '$bdir/$nbase/$fbase' & cpulimit --lazy --limit '$cpulimit' --pid $!'
+			if [ 'x'$debug = 'xy' ]; then
+				echo $cmd
+			fi
+			$cmd
+			if [ "$?" -eq 0 ]; then
+				fbase+='.gz'
+				echo -n $i packed in to $bdir/$nbase/$fbase with size: 
+				echo `du -h $bdir/$nbase/$fbase | cut -f1` 
+			else
+				echo $i not packed. 
+			fi
+
+		fi
 	else
 		echo $i not backuped. 
 	fi
